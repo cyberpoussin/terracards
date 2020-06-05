@@ -10,7 +10,8 @@ import SwiftUI
 
 struct CardVerso: View {
     @ObservedObject var card: Card
-    
+    @Environment(\.verticalSizeClass) var sizeClass
+
     struct imageDefault: View {
         var body: some View {
             Image("photoChene")
@@ -52,39 +53,35 @@ struct CardVerso: View {
                     card.imageVerso!
                         .resizable()
                         .aspectRatio(contentMode: .fill)
-                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 250, maxHeight: UIScreen.main.bounds.height * 85/100 / 2, alignment: .center)
+                        .frame(width: DeviceManager.cardWidth, height: DeviceManager.orientation == .landscape ? DeviceManager.cardHeight/2 : DeviceManager.cardHeight/2.5, alignment: .center)
+                        .clipped()
+                        //.frame(width: DeviceManager.cardWidth, alignment: .top)
                         .cornerRadius(12)
                         .contentShape(Rectangle())
-                        .clipped()
-                        .onAppear() {
-                            self.card.loadingImages()
-                        }
-                } 
-                Spacer()
-            }
+                } else {
+                    Spacer()
+                    .frame(width: DeviceManager.cardWidth, height: DeviceManager.cardHeight/2, alignment: .center)
+                }
+                //Spacer()
+            }.frame(width: DeviceManager.cardWidth)
+
             .allowsHitTesting(false)
             
-
+            //Spacer().frame(height: DeviceManager.cardHeight/10)
             
             HStack {
                 Text(card.name)
                     .font(.title)
-                Circle()
-                    .stroke(lineWidth: 1)
-                    .frame(width: 25, height: 25)
-                    .overlay(
-                        Text("?")
-                )
-                    .opacity(0.3)
             }
-            Spacer()
+            //Spacer()
             HStack {
                 Text(card.anecdote ?? "")
-                .padding()
+                    .padding(.horizontal, 20)
             }
-            //.frame(width: 270)
+            .frame(height: DeviceManager.cardHeight/4)
             
             Spacer().frame(height: 50)
+            Spacer()
         }
     }
 }

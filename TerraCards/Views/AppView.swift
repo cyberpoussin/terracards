@@ -9,69 +9,92 @@
 import SwiftUI
 
 struct AppView: View {
-    
+    @Environment(\.verticalSizeClass) var size
     @EnvironmentObject var cardsModelView: CardsLists
+    @ObservedObject var helpViewManager: HelpViewManager = HelpViewManager()
+
+    
+    
+    
     
     var body: some View {
-        ZStack {
-            
-            
-            TabView {
-                
-                NavigationView { // bouton de la tabBar de Accueil
-                        
+        let coloredAppearance = UINavigationBarAppearance()
+        coloredAppearance.configureWithTransparentBackground()
+        coloredAppearance.backgroundColor = .clear
+        UINavigationBar.appearance().standardAppearance = coloredAppearance
+               UINavigationBar.appearance().compactAppearance = coloredAppearance
+               UINavigationBar.appearance().scrollEdgeAppearance = coloredAppearance
+               UINavigationBar.appearance().tintColor = .white
+        UITabBar.appearance().barTintColor = UIColor(named: "generalBackgroundColor")
+        //UITabBar.appearance().backgroundColor = UIColor.black
+          //UITabBar.appearance().barTintColor?.withAlphaComponent(0.3)
+//        UITabBar.appearance().backgroundImage =  UIImage()
+//
+//        //UITabBar.appearance().isOpaque = false
+//        //UITabBar.appearance().tintColor = .green
+            //UITabBar.appearance().alpha = 0.2
+            UITabBar.appearance().isTranslucent = true
+//
+//        let frost = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
+//        frost.frame = UITabBar.appearance().bounds
+//        frost.autoresizingMask = .flexibleWidth
+//
+//        UITabBar.appearance().insertSubview(frost, at: 0)
+        
 
-                    HomeView()
-                        .environmentObject(cardsModelView)
+        return ZStack {
+            
+            //NavigationView {
+            TabView(selection: $helpViewManager.changeItemSelection) {
+                    NavigationView {
+                        HomeView()
+                        .navigationBarTitle("Collections", displayMode: .inline)
                         .navigationBarHidden(true)
-                        .navigationBarTitle("Collections")
                         
-                        
-
-                    //.navigationViewStyle(StackNavigationViewStyle())
+                    }.navigationViewStyle(StackNavigationViewStyle())
                     
+                    .tabItem({
+                        Image(systemName: "book")
+                        Text("Collections")
+                    })
+                        .tag(1)
+
+                    TropheesView()
+                        .tabItem({
+                            // Image("icons8-book-stack-50")
+                            Image(systemName: "rosette")
+                            Text("Trophées")
+                        }).tag(2)
+
+//                    ParametresView(user: [UserLocation.init(user: .init(latitude: 23, longitude: 34))])
+//                        .tabItem({
+//                            Image(systemName: "gear")   // "helm"
+//                            Text("Environnement")
+//                        })
+
+                        Help(helpViewManager: helpViewManager)
+                        .tabItem({
+                            Image(systemName: "questionmark.square")
+                            Text("Aide")
+                        }).tag(3)
+
+                    
+                        
+                        
+            }
+                if UserSettings.nbLaunches == 1 {
+                    Help(helpViewManager: helpViewManager).environmentObject(cardsModelView)
                 }
-                .tabItem({
-                    Image(systemName: "book")
-                    Text("Collections")
-                })
-                NavigationView {
-                    TropheesView().environmentObject(cardsModelView) // bouton de la tabBar sur trophées
-                }
-                .tabItem({
-                    // Image("icons8-book-stack-50")
-                    Image(systemName: "rosette")
-                    Text("Trophées")
-                })
-                NavigationView {  // bouton de la tabBar sur les parametres
-                    ParametresView(user: [UserLocation.init(user: .init(latitude: 23, longitude: 34))])
-                }
-                .tabItem({
-                    Image(systemName: "gear")   // "helm"
-                    Text("Environnement")
-                })
-                NavigationView {  // bouton de la tabBar sur l'aide a l'utilisation
-                    Help()
-                }
-                .tabItem({
-                    Image(systemName: "questionmark.square")
-                    Text("Aide")
-                })
                 
             }
-//            VStack {
-//                Color.yellow
-//                    .frame(width: 200)
-//            }
-            //.frame(width: 200, height: UIScreen.main.bounds.height)
-            //.background(Color.yellow)
-            if UserSettings.nbLaunches == 1 {
-                Help()
-            }
-            
+
 
             
-        }
+            
+            
+            
+       // }
+
         //.accentColor(.blue)
     }
 }
@@ -81,3 +104,6 @@ struct AppView_Previews: PreviewProvider {
         AppView()
     }
 }
+
+
+

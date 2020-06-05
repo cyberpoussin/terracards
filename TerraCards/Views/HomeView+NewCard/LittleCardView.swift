@@ -21,7 +21,7 @@ struct Layers: View {
                 .fill(Color.white)
             .frame(width: 100, height: 140)
             .offset(x: (self.doubleLayers) * 0.5, y: (self.doubleLayers) * 0.5)
-            .shadow(color: Color.black.opacity(0.1), radius: 7, x: 5, y: 5)
+            .shadow(color: Color.black.opacity(0.1), radius: 5, x: 5, y: 5)
             
             ForEach((0..<doubleIntLayers), id: \.self) {i in
                 RoundedRectangle(cornerRadius: 25)
@@ -81,7 +81,6 @@ struct LittleCardView: View {
         }
     }
     
-
     // création de l'extractingView pour la HomeView
     var body: some View {
             
@@ -90,6 +89,7 @@ struct LittleCardView: View {
                     Button(action: {
                         if self.isCollectionEmpty(collection: self.type) {
                             self.showingAlert = true
+
                         } else {
                             self.showingAlert = false
                             self.activateLink = true
@@ -118,7 +118,7 @@ struct LittleCardView: View {
                     }
                 })
             }.alert(isPresented: $showingAlert) {
-                Alert(title: Text("Pas encore de cartes dans cette catégorie"), message: Text("Vous pouvez gagner de nouvelles cartes tous les jours en cliquant sur le cadeau ou en répondant à un quizz"), dismissButton: .default(Text("OK")))
+                Alert(title: Text("Pas encore de cartes dans cette catégorie"), message: Text("Tu peux gagner de nouvelles cartes tous les jours en cliquant sur le cadeau"), dismissButton: .default(Text("OK")))
             }
    
     }

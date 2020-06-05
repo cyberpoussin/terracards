@@ -11,41 +11,42 @@ import SwiftUI
 struct Help: View {
     
     @EnvironmentObject var cardsModelView: CardsLists
+    @ObservedObject var helpViewManager: HelpViewManager
+
     
-    @State var offset = Array(repeating: CGSize(width: 0, height: 0), count: 4)
-    
-    @State var showed = Array(repeating: false, count: 4)
-    @State var sheet = 0
-    @State var endFlip = false
-    @State var opacity = 0.1
-    
-    var card: Card? {
-        return cardsModelView.allCards.first {
-            $0.name == "Mésange bleue"
+    var nbCard: Int? {
+        return cardsModelView.allCards.firstIndex {
+            $0.name == "Salamandre tâchetée"
         }
     }
+    
+    var onBoarding: Bool {
+        UserSettings.nbLaunches == 1
+    }
+    
+    
     var body: some View {
         let drag = DragGesture()
             .onChanged({value in
                 if  value.translation.width < 0 {
-                    self.offset[self.sheet].width = value.translation.width
+                    self.helpViewManager.offset[self.helpViewManager.sheet].width = value.translation.width
                 }
             })
             .onEnded({value in
                 withAnimation(.linear(duration: 0.5)) {
-                    if self.offset[self.sheet].width < -100 {
+                    if self.helpViewManager.offset[self.helpViewManager.sheet].width < -100 {
                         
-                        self.offset[self.sheet].width = -1 * UIScreen.main.bounds.width
+                        self.helpViewManager.offset[self.helpViewManager.sheet].width = -1 * UIScreen.main.bounds.width - 1000
                     } else {
-                        self.offset[self.sheet].width = 0
+                        self.helpViewManager.offset[self.helpViewManager.sheet].width = 0
                     }
                 }
                 
-                if self.offset[self.sheet].width < -100 {
-                    self.sheet += 1
+                if self.helpViewManager.offset[self.helpViewManager.sheet].width < -100 {
+                    self.helpViewManager.sheet += 1
                     withAnimation(.linear(duration: 0.5)) {
-                        if self.sheet < self.showed.count {
-                            self.showed[self.sheet].toggle()
+                        if self.helpViewManager.sheet < self.helpViewManager.showed.count {
+                            self.helpViewManager.showed[self.helpViewManager.sheet].toggle()
                         }
                     }
                 }
@@ -57,25 +58,36 @@ struct Help: View {
             ZStack {
                 ZStack {
                     Color(UIColor.systemYellow)
-                    .edgesIgnoringSafeArea(.all)
+                        .edgesIgnoringSafeArea(.all)
                     
-                    
-                    ThreeVerticalView(delays: [1,1,2],
+                    if self.helpViewManager.sheet == 3 && !onBoarding{
+                        Text("")
+                            .onAppear() {
+                                GlobalTabBar.reAppear()
+                        }
+                    }
+                    ThreeVerticalView(delays: [1,1,2], arrow: false,
                                       firstView: {
                                         ThreeWords(sentence: "Collectionne les toutes")
                                             .font(.title)
                     }, secondView: {
                         HStack {
                             //if self.showed[0] {
-                            Text("Tes cartes gagnées sont rangées dans des collections (plantes, oiseaux, poissons, etc.) Pour commencer, on t'en a offert déjà 3. A toi de découvrir où elles sont rangées et les informations qu'elles contiennent.")
+                            Text("Tes cartes gagnées sont rangées dans des collections (plantes, oiseaux, poissons, etc.) Pour commencer, on t'en a offert déjà 5. A toi de découvrir où elles sont rangées et les informations qu'elles contiennent.")
                                 
                                 .padding(40)
                                 .transition(.move(edge: .bottom))
                             
                         }
                     }, thirdView: {
-                        ThreeWords(sentence : "Glisse pour commencer !")
-                        
+                        HStack {
+                            if self.onBoarding {
+                                ThreeWords(sentence : "Glisse pour commencer !")
+                            } else {
+                                Text("Fin...")
+                                
+                            }
+                        }
                         //.foregroundColor(Color.white)
                         
                     })
@@ -86,43 +98,43 @@ struct Help: View {
                     }
                 }
                 .frame(width:UIScreen.main.bounds.width)
-                .offset(x: self.offset[3].width, y: 0)
+                .offset(x: self.helpViewManager.offset[3].width, y: 0)
                 .gesture(drag)
-                .disabled(self.sheet != 3)
+                .disabled(self.helpViewManager.sheet != 3 || !onBoarding)
                 
                 
                 ZStack {
                     Color(UIColor.systemGreen)
-                    .edgesIgnoringSafeArea(.all)
+                        .edgesIgnoringSafeArea(.all)
                     
-                    if showed[2] {
-                    ThreeVerticalView(delays: [1,2,3],
-                                      firstView: {
-                                        Text("Gagne des cartes chaque jour !")
-                                            .font(.title)
-                    }, secondView: {
-                        VStack {
-                            HStack {
-                                Quizz(clearView: true)
-
-                                .disabled(true)
-                                Gift()
-
-                                .disabled(true)
-                            }
-
-                            Text("Des cartes comme cette mésange, tu vas pouvoir en gagner 3 gratuitement chaque jour. Tous les matins un nouveau cadeau apparaît dans TerraCards, à toi de découvrir ce qu'il y a dedans. Si tu as encore soif de connaissances sur la biodiversité, participe à des quizz pour gagner encore plus de cartes.")
+                    if helpViewManager.showed[2] {
+                        ThreeVerticalView(delays: [1,2,3],
+                                          firstView: {
+                                            Text("Gagne des cartes chaque jour !")
+                                                .font(.title)
+                        }, secondView: {
+                            VStack {
+                                HStack {
+                                    Quizz(clearView: true)
+                                        
+                                        .disabled(true)
+                                    Gift()
+                                        
+                                        .disabled(true)
+                                }
                                 
-                                .padding(40)
-                                .transition(.move(edge: .bottom))
+                                Text("Des cartes comme cette salamandre, tu vas pouvoir en gagner 3 gratuitement chaque jour. Tous les matins un nouveau cadeau apparaît dans TerraCards, à toi de découvrir ce qu'il y a dedans. Si tu as encore soif de connaissances, participe à des quizz pour gagner encore plus de cartes.")
+                                    
+                                    .padding(40)
+                                    .transition(.move(edge: .bottom))
+                                
+                            }
+                        }, thirdView: {
+                            ThreeWords(sentence : "Glisse pour continuer")
                             
-                        }
-                    }, thirdView: {
-                        ThreeWords(sentence : "Glisse pour continuer")
-                        
-                        //.foregroundColor(Color.white)
-                        
-                    })
+                            //.foregroundColor(Color.white)
+                            
+                        })
                     }
                 }
                 .onAppear() {
@@ -131,28 +143,28 @@ struct Help: View {
                     }
                 }
                 .frame(width:UIScreen.main.bounds.width)
-                .offset(x: self.offset[2].width, y: 0)
+                .offset(x: self.helpViewManager.offset[2].width, y: 0)
                 .gesture(drag)
-                .disabled(self.sheet != 2)
+                .disabled(self.helpViewManager.sheet != 2)
                 
                 
                 
-                    
+                
                 ZStack {
                     Color(UIColor.systemBlue)
                         .edgesIgnoringSafeArea(.all)
                     
                     VStack {
-                        //Spacer().frame(height:200)
-                        if card != nil {
-                            CardFlip(flip: $endFlip, versoView: {
-                                AnyView(CardVerso(card: self.card!))
+                        Spacer()
+                        if nbCard != nil {
+                            CardFlip(flip: $helpViewManager.endFlip, versoView: {
+                                AnyView(CardVerso(card: cardsModelView.allCards[nbCard!]))
                             }, rectoView: {
-                                CardRecto(card: self.card!)
+                                AnyView(CardRecto(card: cardsModelView.allCards[nbCard!]))
                             })
-                                .scaleEffect(0.6)
-                                .padding(.bottom, -50)
-                                .disabled(endFlip)
+                                .scaleEffect(0.5)
+                                .frame(height: DeviceManager.cardHeight*0.5)
+                                .disabled(helpViewManager.endFlip)
                         }
                         
                         Text("Tu vas collectionner des cartes qui te permettront d'avoir des informations sur des animaux et des plantes des environs")
@@ -161,7 +173,7 @@ struct Help: View {
                             .padding()
                         //if showed[1] {
                         
-                        if endFlip {
+                        if helpViewManager.endFlip {
                             HStack {
                                 AnimatedChevron()
                                 Text("Glisse pour continuer")
@@ -169,10 +181,10 @@ struct Help: View {
                                 
                                 
                             }
-                            .opacity(opacity)
+                            .opacity(helpViewManager.opacity)
                             .onAppear() {
                                 withAnimation(.linear(duration: 1)) {
-                                    self.opacity = 1
+                                    self.helpViewManager.opacity = 1
                                 }
                             }
                             
@@ -184,13 +196,19 @@ struct Help: View {
                     }
                 }
                 .frame(width:UIScreen.main.bounds.width)
-                .offset(x: self.offset[1].width, y: 0)                .gesture(drag)
-                .disabled(self.sheet != 1)
+                .offset(x: self.helpViewManager.offset[1].width, y: 0)
+                .gesture(drag)
+                .disabled(self.helpViewManager.sheet != 1)
                 
                 
                 ZStack {
                     Color(UIColor.systemRed)
                         .edgesIgnoringSafeArea(.all)
+                        .onAppear() {
+                            if !self.onBoarding {
+                                GlobalTabBar.disappear()
+                            }
+                    }
                     
                     ThreeVerticalView(delays: [2.5,5,0],
                                       firstView: {
@@ -211,13 +229,13 @@ struct Help: View {
                         //.foregroundColor(Color.white)
                         
                     })
-                        
+                    
                     
                 }
                 .frame(width:UIScreen.main.bounds.width)
-                .offset(x: self.offset[0].width, y: 0)
+                .offset(x: self.helpViewManager.offset[0].width, y: 0)
                 .gesture(drag)
-                .disabled(self.sheet != 0)
+                .disabled(self.helpViewManager.sheet != 0)
                 
                 
             }.edgesIgnoringSafeArea(.all)
@@ -286,7 +304,7 @@ struct AnimatedChevron: View {
 
 struct ThreeVerticalView<FirstView: View, SecondView: View, ThirdView: View>: View {
     var delays: [Double]
-    
+    var arrow = true
     var firstView: () -> FirstView
     var secondView: () -> SecondView
     var thirdView: () -> ThirdView
@@ -300,7 +318,9 @@ struct ThreeVerticalView<FirstView: View, SecondView: View, ThirdView: View>: Vi
             secondView().opacity(self.opacities[1])
             if self.showed {
                 HStack {
-                    AnimatedChevron()
+                    if arrow {
+                        AnimatedChevron()
+                    }
                     thirdView()
                         .foregroundColor(Color.white)
                     
@@ -309,7 +329,9 @@ struct ThreeVerticalView<FirstView: View, SecondView: View, ThirdView: View>: Vi
             }
             else {
                 HStack {
-                    AnimatedChevron()
+                    if arrow {
+                        AnimatedChevron()
+                    }
                     thirdView()
                         .foregroundColor(Color.white)
                     
@@ -337,7 +359,8 @@ struct ThreeVerticalView<FirstView: View, SecondView: View, ThirdView: View>: Vi
 struct Help_Previews: PreviewProvider {
     static var previews: some View {
         let env = CardsLists()
-        return Help()
+        let hvmanager = HelpViewManager()
+        return Help(helpViewManager: hvmanager)
             .environmentObject(env)
             .onAppear(){
                 env.fillLists(){response in

@@ -45,26 +45,79 @@ extension CardsLists {
     
     func fillLists(completion: @escaping Completion) {
         print("youhou")
-
-        fetchAllCards {responseFetch in
-            switch responseFetch {
-            case .success:
+        
+        // d'abord on charge dans l'environnementObject un Json Local
+        readLocalJsonAndFillAllCards {responseJson in
+            switch responseJson {
+            case .success(.cardList):
+                // on génère la liste des cartes déjà gagnées
+                print("on passe là ???")
                 self.fillWonCardsList()
                 completion(.success(self))
             case let .failure(error):
                 completion(.failure(error))
+            default: completion(.failure(.unknown))
+            }
+        }
+        
+        // puis on tente de charger le Json distant et si trouvé, on met à jour le Json Local
+        fetchAndFillAllCards {responseFetch in
+            switch responseFetch {
+            case let .success(.cardList(_, data)):
+                // on génère la liste des cartes déjà gagnées
+                self.fillWonCardsList()
+                // on sauvegarde en cache et dans les userdefaults
+                FileProvider.writeJsonInCache(data: data)
+                UserSettings.allCards = data
+                completion(.success(self))
+            case let .failure(error):
+                completion(.failure(error))
+            default: completion(.failure(.unknown))
             }
         }
     }
     
-    func fetchAllCards(completion: @escaping APIProvider.Completion) {
-        APIProvider.shared.requestAllRecords(){response in
+    //cherche un json de la liste globale de carte, dans UserDefaults, sinon le Cache, sinon le Bundle
+    func readLocalJsonAndFillAllCards(completion: @escaping APIProvider.Completion) {
+        
+        var json: Data? = nil
+        
+        if UserSettings.allCards != nil {
+            json = UserSettings.allCards!
+        } else if let json2 = FileProvider.getJsonFromCacheOrBundle() {
+            json = json2
+        }
+        
+        if json == nil {
+            completion(.failure(.dataEmpty))
+            return
+        }
+        
+        
+        JSONProvider.decodeToCardList(from: json!) {response in
+            switch response {
+            case let .success(cardList):
+                self.allCards = []
+                for cardRecord in cardList.records {
+                    self.allCards.append(cardRecord.fields)
+                }
+                completion(.success(.cardList(cardList: cardList, data: json!)))
+            case .failure:
+                completion(.failure(.dataCantBeDecoded))
+            }
+        }
+
+        
+    }
+    
+    func fetchAndFillAllCards(completion: @escaping APIProvider.Completion) {
+        APIProvider.shared.requestAllRecordsValidated(){response in
             switch response {
                 case let .success(.data(data)):
                     self.fillAllCardsList(with: data) {response in
                         switch response {
                         case .failure: completion(.failure(.dataCantBeDecoded))
-                        case let .success(cardList): completion(.success(.cardList(cardList: cardList)))
+                        case let .success(cardList): completion(.success(.cardList(cardList: cardList, data: data)))
                     }
                 }
                 case let .failure(error):

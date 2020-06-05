@@ -11,7 +11,7 @@ import MapKit
 import SwiftUI
 
 final class Card: Decodable, Identifiable, Hashable, ObservableObject {
-    let id = UUID()
+    let id: Int
     let name: String!
     
     var imageRectoURL: URL?
@@ -24,13 +24,14 @@ final class Card: Decodable, Identifiable, Hashable, ObservableObject {
     let season: String!
     let averageSize: String!
     let anecdote: String!
-    var obtained: Bool
     let collection : CollectionType!
     let alert: AlertType!
     
     
     var latitude: Double
     var longitude: Double
+    
+    var lastModifTime: Date?
     
     var coordinates: MKCoordinateRegion {
         MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: latitude, longitude: longitude), latitudinalMeters: 100, longitudinalMeters: 100)
@@ -41,7 +42,7 @@ final class Card: Decodable, Identifiable, Hashable, ObservableObject {
     
     // Pour rendre la Card Decodable du JSON
     enum CodingKeys: String, CodingKey {
-        case id, name, imageRecto, imageVerso, habitats, season, averageSize, anecdote, collection, alert, latitude, longitude, obtained, imageRectoLastChange, imageVersoLastChange
+        case id, name, imageRecto, imageVerso, habitats, season, averageSize, anecdote, collection, alert, latitude, longitude, imageRectoLastChange, imageVersoLastChange, lastModifiedTime
     }
     
     
@@ -56,13 +57,15 @@ final class Card: Decodable, Identifiable, Hashable, ObservableObject {
 
     // Initialisation à vide (pour les preview)
     init() {
-        self.name = "Chêne"
-        self.imageRectoURL = URL(string: "https://master.salamandre.net/media/21902/chene-jardin-1800x1012.png")!
-        self.imageVersoURL = self.imageRectoURL
+        self.id = 98789098
+        self.name = "Fiche vide"
+        self.imageRectoURL = URL(string:
+            "https://dl.airtable.com/.attachmentThumbnails/707d29c9cb0b31676cf38b184e9168c5/e2e7889e")!
+        self.imageVersoURL = URL(string:
+        "https://master.salamandre.net/media/21902/chene-jardin-1800x1012.png")!
         self.habitats = [.mountains]
         self.alert = .blackAlert
         self.collection = .amphibian
-        self.obtained = false
         self.anecdote = "hahaha"
         self.averageSize = "telle taille"
         self.latitude = 48
@@ -73,13 +76,16 @@ final class Card: Decodable, Identifiable, Hashable, ObservableObject {
     // Initialisation depuis un decoder JSON
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
-        name = try values.decode(String.self, forKey: CodingKeys.name)
+        
+        id = try values.decode(Int.self, forKey: CodingKeys.id)
+        name = try? values.decode(String.self, forKey: CodingKeys.name)
         habitats = try? values.decode([HabitatType].self, forKey: CodingKeys.habitats)
         season = try? values.decode(String.self, forKey: CodingKeys.season)
         averageSize = try? values.decode(String.self, forKey: CodingKeys.averageSize)
         anecdote = try? values.decode(String.self, forKey: CodingKeys.anecdote)
         collection = try? values.decode(CollectionType.self, forKey: CodingKeys.collection)
         alert = try? values.decode(AlertType.self, forKey: CodingKeys.alert)
+        
         if let longitude = try?  values.decode(Double.self, forKey: CodingKeys.longitude) {
             self.longitude = longitude
         } else {
@@ -90,11 +96,7 @@ final class Card: Decodable, Identifiable, Hashable, ObservableObject {
         } else {
             self.latitude = 2
         }
-        if let obtained = try?  values.decode(Bool.self, forKey: CodingKeys.obtained) {
-            self.obtained = obtained
-        } else {
-            self.obtained = false
-        }
+        
         
         if let imageRectoLastChange = try? values.decode(String.self, forKey: CodingKeys.imageRectoLastChange) {
             let formatter = DateFormatter()
@@ -108,10 +110,21 @@ final class Card: Decodable, Identifiable, Hashable, ObservableObject {
         
         if let imageVersoLastChange = try? values.decode(String.self, forKey: CodingKeys.imageVersoLastChange) {
             let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.000Z"
+            formatter.timeZone = TimeZone(secondsFromGMT: 0)
             self.imageVersoOnlineDate = formatter.date(from: imageVersoLastChange)
         } else {
             self.imageVersoOnlineDate = nil
         }
+        
+        
+        if let lastModifiedTime = try? values.decode(String.self, forKey: CodingKeys.lastModifiedTime) {
+            let formatter = DateFormatter()
+            self.lastModifTime = formatter.date(from: lastModifiedTime)
+        } else {
+            self.lastModifTime = nil
+        }
+        
         
         
         if let imageRectoArray = try? values.decode([ImageJson].self, forKey: CodingKeys.imageRecto) {
@@ -124,6 +137,9 @@ final class Card: Decodable, Identifiable, Hashable, ObservableObject {
             self.imageVersoURL = URL(string: imageVersoArray[0].url)!
 
         }
+        
+        
+        
         
         imageRecto = nil
         imageVerso = nil
@@ -138,23 +154,28 @@ final class Card: Decodable, Identifiable, Hashable, ObservableObject {
         
         if imageRectoOnlineDate == nil ||
             imageRectoOnlineDate! < (FileProvider.fileModificationDate(fileURL: FileProvider.getCachedCardImageUrl(name: self.name, suffix: "recto")) ?? Date())  {
-            print("cache cachou")
+            print("cache cachou recto")
             imageRecto = FileProvider.getImageFromCache(name: self.name, suffix: "recto")
         }
         if imageVersoOnlineDate == nil ||
             imageVersoOnlineDate! < (FileProvider.fileModificationDate(fileURL: FileProvider.getCachedCardImageUrl(name: self.name, suffix: "verso")) ?? Date()) {
+            print("cache cachou verso")
+
             imageVerso = FileProvider.getImageFromCache(name: self.name, suffix: "verso")
         }
 
 
         if imageRecto == nil && imageRectoURL != nil {
-            print("on télécharge")
+            print("on télécharge le recto")
             APIProvider.shared.downloadImageFromURL(url: imageRectoURL!, completion: { response in
                 switch response {
                 case let .success(response):
                     switch response {
                     case let .image(image: image):
-                        self.imageRecto = Image(uiImage: image)
+                        DispatchQueue.main.async {
+                            self.imageRecto = Image(uiImage: image)
+                        }
+                        
                         FileProvider.writeImageInCache(image: image, name: self.name, suffix: "recto")
                     default:
                         print("on a téléchargé autre chose qu'une image")
@@ -253,15 +274,15 @@ enum CollectionType: String, CaseIterable, Identifiable, Codable{
     var image : String {
         get {
             switch self {
-                case .tree : return "chene"
-                case .fish : return "truite"
-                case .mollusc : return "buccin"
+                case .tree : return "arbres"
+                case .fish : return "poisson"
+                case .mollusc : return "coquillages"
                 case .largeMammal : return "mams"
                 case .bird : return "moineau"
-                case .insect : return "coccinnelle"
-                case .reptile : return "vipere"
-                case .plant : return "coquelicot"
-                case .amphibian : return "grenouille"
+                case .insect : return "papillon2"
+                case .reptile : return "reptiles"
+                case .plant : return "fleur"
+                case .amphibian : return "grenouille2"
                 case .smallMammal : return "herisson"
                 case .spider : return "araignee"
                 case .dinosaur : return "dino"

@@ -9,6 +9,8 @@
 import SwiftUI
 
 struct CardFlip<Content: View, Content2: View>: View {
+    @Environment(\.verticalSizeClass) var sizeClass
+    
     @State var currentPosition: CGSize = .zero
     @State var currentAngle: Double = .zero
     var currentAngleMod: Double {
@@ -194,10 +196,7 @@ struct CardFlip<Content: View, Content2: View>: View {
                     .rotation3DEffect(Angle(degrees: 180), axis: (x: 0, y: 1, z: 0))
                     .zIndex(self.recto ? 0 : 1)
                 
-                VStack {
-                    Spacer()
-                }.frame(width: UIScreen.main.bounds.width * 85/100, height: UIScreen.main.bounds.height * 75/100)
-                    .background(Color.gray)
+                Color.gray
 
                     .zIndex((89.7...90.3).contains(abs(currentAngle)) || (269.7...270.3).contains(abs(currentAngle)) ? 2 : 0)
                 
@@ -205,7 +204,7 @@ struct CardFlip<Content: View, Content2: View>: View {
                     .background(Color("cardBackground"))
                 
             }
-            .frame(width: UIScreen.main.bounds.width * 85/100, height: UIScreen.main.bounds.height * 75/100)
+            //.frame(width: UIScreen.main.bounds.width * 100/100, height: UIScreen.main.bounds.height * 100/100)
                 
             .cornerRadius(70)
             .shadow(color: Color.black.opacity(0.4), radius: abs(shadow), x: shadow, y:  abs(shadow))
@@ -214,28 +213,19 @@ struct CardFlip<Content: View, Content2: View>: View {
             .gesture(drag)
             .zIndex(1)
             
-            VStack {
-                Spacer()
+            ForEach(1..<3, id: \.self) {i in
+                Color.gray
+
+
+                .cornerRadius(70)
+                    .rotation3DEffect(Angle(degrees: self.currentAngleMod) , axis: (x: 0, y: 1, z: 0), anchor: .center)
+                    .offset(x: Int(self.currentAngle) % 180 == 0 ? self.currentPosition.width : (self.left ? self.currentPosition.width + CGFloat(2 * i) : self.currentPosition.width - CGFloat(2 * i)), y:  self.currentPosition.height)
+                .zIndex(0)
             }
-            .frame(width: UIScreen.main.bounds.width * 85/100, height: UIScreen.main.bounds.height * 75/100)
-            .background(Color.gray)
+            
 
-            .cornerRadius(70)
-            .rotation3DEffect(Angle(degrees: currentAngleMod) , axis: (x: 0, y: 1, z: 0), anchor: .center)
-            .offset(x: Int(currentAngle)%180 == 0 ? currentPosition.width : (left ? currentPosition.width+2 : currentPosition.width-2), y:  currentPosition.height)
-            .zIndex(0)
-
-            VStack {
-                Spacer()
-            }
-            .frame(width: UIScreen.main.bounds.width * 85/100, height: UIScreen.main.bounds.height * 75/100)
-            .background(Color.gray)
-
-            .cornerRadius(70)
-            .rotation3DEffect(Angle(degrees: currentAngleMod) , axis: (x: 0, y: 1, z: 0), anchor: .center)
-            .offset(x: Int(currentAngle)%180 == 0 ? currentPosition.width : (left ? currentPosition.width+4 : currentPosition.width-4), y:  currentPosition.height)
-            .zIndex(0)
         }
+        .frame(width: DeviceManager.cardWidth, height: DeviceManager.cardHeight)
     }
 }
 

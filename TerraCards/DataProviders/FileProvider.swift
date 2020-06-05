@@ -14,6 +14,7 @@ import SwiftUI
 enum FileError: Error {
     case unknown
     case imageNotFound
+    case jsonNotFound
     case writingError(error: Error)
     case deletingError(error: Error)
 }
@@ -57,8 +58,36 @@ struct FileProvider {
         return image
     }
     
+    static func getJsonFromCacheOrBundle(completion: Completion? = nil) -> Data? {
+        print("on cherche le json")
+        let cachesURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        let cacheFileURL = cachesURL.appendingPathComponent("liste_cartes_default.json")
+        let bundleFileURL = Bundle.main.url(forResource: "liste_cartes_default", withExtension: "json")
+        
+        if FileManager.default.fileExists(atPath: cacheFileURL.path) {
+            print("json trouvé dans le cache")
+            if let data = try? Data(contentsOf: cacheFileURL) {
+                completion?(.success(cacheFileURL))
+                return data
+            }
+        }
+        
+        if let bundleFileURL = bundleFileURL {
+            print("json trouvé dans le bundle")
+            if let data = try? Data(contentsOf: bundleFileURL) {
+                print("json trouvé dans le bundle")
+                completion?(.success(bundleFileURL))
+                return data
+            }
+        }
+        
+        completion?(.failure(.jsonNotFound))
+        print("image non trouvée")
+        return nil
+    }
+    
     static func writeImageInCache(image: UIImage, name: String?, suffix: String?, completion: Completion? = nil) {
-        print("on écrit l'image dans le cache")
+        print("on écrit l'image \(suffix ?? "") dans le cache")
         let cachesURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
         let fileURL = cachesURL.appendingPathComponent("\(name ?? "image_default")_\(suffix ?? "").png")
         do {
@@ -72,6 +101,20 @@ struct FileProvider {
             completion?(.failure(.writingError(error: error)))
         }
         
+    }
+    
+    static func writeJsonInCache(data: Data) {
+       print("on écrit le json dans le cache")
+        let cachesURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        let fileURL = cachesURL.appendingPathComponent("liste_cartes_default.json")
+        do {
+                try data.write(to: fileURL, options: .atomic)
+                print("json bien inscrit dans le cache à l'adresse : \(fileURL.path)")
+            
+        } catch {
+            print("erreur inscription json dans cache : \(error)")
+
+        }
     }
 
     static func clearImagesFromCacheFolder(completion: Completion?  = nil) {

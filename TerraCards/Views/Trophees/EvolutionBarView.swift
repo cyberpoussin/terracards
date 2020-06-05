@@ -12,7 +12,7 @@ struct EvolutionBar: View {
     
     let valeurMaxLigne:CGFloat = 170
     @State var valEvolutionBar:CGFloat = 60
-    
+    @State var contour:Color = .white
     var body: some View {
         ZStack(alignment: .topLeading) {
             Rectangle()
@@ -21,7 +21,7 @@ struct EvolutionBar: View {
                 .opacity(0.2)
             Rectangle()
                 .frame(width: valEvolutionBar, height: 3.0)
-                .foregroundColor(Color.blue)
+                .foregroundColor(contour.opacity(0.5))
         }
    }
 }

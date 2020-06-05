@@ -47,17 +47,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         
         
-        let REINIT = false
-        
+        let REINIT = true
+        UserSettings.illimitedQuizz = true
         if REINIT {
-            UserSettings.nbLaunches = 0
+            UserSettings.nbLaunches = 2
             UserSettings.lastFreeWins = "2001-01-01"
+            UserDefaults.standard.removeObject(forKey: UserDefaults.Keys.allCards.rawValue)
             FileProvider.clearImagesFromCacheFolder(){response in
                 print("ok")
             }
-            UserSettings.nbQuizz = 0
+            UserSettings.nbQuizz = 1
             UserSettings.userCards = []
         } else {
+            
             UserSettings.nbLaunches = UserSettings.nbLaunches + 1
             print("nombre de lancement de l'app : \(UserSettings.nbLaunches)")
             
@@ -76,6 +78,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     UserSettings.nbQuizz = 0
                 }
             }
+            
+            //desactivation des quizz
+            UserSettings.nbQuizz = 1
         }
         
         
@@ -88,16 +93,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         cards.fillLists {response in
             switch response {
             case .success:
+                
+                // télécharge la base et l'inscrit dans un fichier cache, dont on pourrait se servir pour la précharger en attente de connexion...
+                
+                //FileProvider.writeJsonInCache(data: data)
                 // à retirer en prod
                 var cardsToAdd: [Card] = []
-                cardsToAdd.append(self.cards.allCards.first(where: {$0.name == "Ortie"})!)
-                cardsToAdd.append(self.cards.allCards.first(where: {$0.name == "Pavot cornu"})!)
+                cardsToAdd.append(self.cards.allCards.first(where: {$0.name == "Mésange bleue"})!)
+                cardsToAdd.append(self.cards.allCards.first(where: {$0.name == "Salamandre tâchetée"})!)
+                cardsToAdd.append(self.cards.allCards.first(where: {$0.name == "Moustique tigre"})!)
                 cardsToAdd.append(self.cards.allCards.first(where: {$0.name == "Jacinthe des bois"})!)
+                cardsToAdd.append(self.cards.allCards.first(where: {$0.name == "Goujon"})!)
                 self.cards.winCards(cards: cardsToAdd)
                 for card in self.cards.wonCards {
                     print(card.name ?? "")
                 }
-            case .failure:
+                
+            
+            default:
                 print("problem during downloading or decoding")
                 // retry ??
             }
@@ -166,7 +179,7 @@ extension AppDelegate {
             self.cancelAllPandingBGTask()
         }
 
-        cards.fetchAllCards {response in
+        cards.fetchAndFillAllCards {response in
             switch response {
             case .success:
                 print("all cards fetched and loaded in background")

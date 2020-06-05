@@ -2,13 +2,11 @@
 //  TropheesView.swift
 //  TerraCards
 //
-//  Created by MacBookGP on 11/05/2020.
+//  Created by Ghislain on 11/05/2020.
 //  Copyright © 2020 MacBookGP. All rights reserved.
 //
 
 import SwiftUI
-import MapKit
-
 
 struct TropheesView: View {
     
@@ -19,71 +17,50 @@ struct TropheesView: View {
     @State var accueil:Bool = false
     
     var body: some View {
-            ZStack {
-                Color("ColorTrophee")
-                 VStack {
-                        ScrollView(.vertical, showsIndicators: false) {
-                            HStack {   // carte total
-                                CardTropheeView(image: "hat-school" , contour: listeCards.numbersColorCards())
-                                    .padding()
-                                VStack {
-                                    
-                                    HStack {
-                                        Text("Total de Cartes")
-                                            .font(.callout)
-                                        Text("\(listeCards.numbersMaxObtainedCards().nbCardObtained)")
-                                    }.foregroundColor(Color.black)
-                                    EvolutionBar(valEvolutionBar: listeCards.numbersMaxObtainedCards().nbCardEvoltionBar)
-                                        .padding()
-                                }.padding()
-                            }.background(Color.colorTrophees)
-//                            HStack {   // carte cadeeaux
-//                                CardTropheeView(image: "Cadeaux-cards" , contour: Color.gray)
-//                                    .padding()
-//                                VStack {
-//                                    HStack {
-//                                        Text("Cartes Cadeaux")
-//                                            .font(.callout)
-//                                        Text("4")
-//                                    }.foregroundColor(Color.black)
-//                                    EvolutionBar(valEvolutionBar: 20)
-//                                        .padding()
-//                                }.padding()
-//                            }.background(Color.colorTrophees)
-//                            HStack {  // carte quizz
-//                                CardTropheeView(image: "Quizz" , contour: Color.gray)
-//                                    .padding()
-//                                VStack {
-//                                    HStack {
-//                                        Text("Cartes Quizz")
-//                                            .font(.callout)
-//                                        Text("4")
-//                                    }.foregroundColor(Color.black)
-//                                    EvolutionBar(valEvolutionBar: 30)
-//                                        .padding()
-//                                }.padding()
-//                            }.background(Color.colorTrophees)
-                            ForEach(collection , id: \.id) { trophee in
-                                  // toute les autres cartes
-                                HStack {
-                                    CardTropheeView(image: trophee.image, contour: self.listeCards.numberCardsMaxCollection(collection: trophee).cardColor)
-                                        .padding() 
-                                    VStack {
-                                        HStack {
-                                            Text("\(trophee.name) ")
-                                                .font(.callout)
-                                            Text("\(self.listeCards.numberCardsMaxCollection(collection: trophee).obtained)")
-                                        }.foregroundColor(Color.black)
-                                        EvolutionBar(valEvolutionBar: self.listeCards.numberCardsMaxCollection(collection: trophee).numberEvolutionBar)
-                                            .padding()
-                                    }.padding()
-                                }.background(Color.colorTrophees)
-                            }
-                            Spacer().frame(height: 75)
-                        }.padding(.top, 70.0)
+        ZStack {
+            Color.colorTrophees.opacity(0.1)
+            .edgesIgnoringSafeArea(.all)
+
+            ScrollView(.vertical, showsIndicators: false) {
+                Spacer().frame(height: 30)
+                HStack {   // carte total
+                    CardTropheeView(image: "hat-school" , contour: listeCards.numbersColorCards())
+                        
+                    Spacer().frame(width: 30)
+
+                    VStack(alignment: .leading, spacing: 0) {
+                        
+                        HStack(alignment: .bottom) {
+                            Text("Gagnées : ")
+                                .font(.callout)
+                            Text("\(listeCards.numbersMaxObtainedCards().nbCardObtained) / \(listeCards.numbersMaxObtainedCards().nbCardMax)")
+                            
+                        }.foregroundColor(Color.gray)
+                        EvolutionBar(valEvolutionBar: listeCards.numbersMaxObtainedCards().nbCardEvoltionBar, contour: listeCards.numbersColorCards())
+                            .padding(.top, 8)
+                    }.padding(.horizontal, 20)
                 }
+                
+                ForEach(collection , id: \.id) { trophee in
+                    // toute les autres cartes
+                    HStack {
+                        CardTropheeView(image: trophee.image, contour: self.listeCards.numberCardsMaxCollection(collection: trophee).cardColor)
+                        Spacer().frame(width: 30)
+                        VStack(alignment: .leading, spacing: 0) {
+                            HStack {
+                                Text("\(trophee.name) : ")
+                                    .font(.callout)
+                                Text("\(self.listeCards.numberCardsMaxCollection(collection: trophee).obtained)")
+                            }.foregroundColor(Color.gray)
+                            EvolutionBar(valEvolutionBar: self.listeCards.numberCardsMaxCollection(collection: trophee).numberEvolutionBar, contour: self.listeCards.numberCardsMaxCollection(collection: trophee).cardColor)
+                            .padding(.top, 8)
+                        }.padding(.horizontal, 20)
+                    }.padding(.vertical, 0)
+                }
+                Spacer().frame(height: 75)
             }
-           .edgesIgnoringSafeArea(.all)
+            
+        }
     }
 }
 
@@ -116,7 +93,7 @@ struct TropheesView_Previews: PreviewProvider {
                         cardsToAdd.append(env.allCards.first(where: {$0.name == "Vipère aspic"})!)
                         env.winCards(cards: cardsToAdd)
                         
-
+                        
                     case .failure :
                         print("mince")
                     }

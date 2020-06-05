@@ -23,12 +23,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         //let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         let cards = (UIApplication.shared.delegate as! AppDelegate).cards
-        
         // Create the SwiftUI view that provides the window contents.
         
         
         let contentView = AppView().environmentObject(cards)
-        let contentView2 = CardVerso(card: Card())
+        let contentView3 = OnlyValids()
 
         // Use a UIHostingController as window root view controller.
         if let windowScene = scene as? UIWindowScene {

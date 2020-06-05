@@ -39,132 +39,14 @@ struct GridStack<Content: View>: View {
     }
 }
 
-struct Quizz: View {
-    @State var showPlayAlertTwo = false
-    @State var alreadyPlayed = false
-    @State var activateLinkTwo = false
-    @EnvironmentObject var cardsModelView: CardsLists
 
-    var clearView = false
-    
-    var body: some View {
-        VStack{
-            NavigationLink(destination: NewCardsWonView(quizz: true, bgColor: Color(UIColor.systemPink)), isActive: self.$activateLinkTwo, label: {
-                Button(action: {
-                    if UserSettings.nbQuizz == 1 {
-                        self.showPlayAlertTwo = true
-                        self.activateLinkTwo = false
-                        self.alreadyPlayed = true
-                    } else {
-                        self.showPlayAlertTwo = false
-                        UserSettings.nbQuizz = UserSettings.nbQuizz + 1
-                        self.activateLinkTwo = true
-                    }
-                }) {
-                    VStack{
-                        Image("questionmark3")
-                            
-                            .renderingMode(.original)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width:90, height: 90)
-                            .padding(.top, 0)
-                        //.font(.title)
-                             
-                        Text("Surprise !")
-                            .font(.footnote)
-                            .padding(.top, -20)
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                    .frame(width: 60, height: 60)
-                    .padding()
-                    .background(Color(UIColor.systemPink))
-                    .cornerRadius(15)
-                    .foregroundColor(Color(UIColor.systemGray5))
-                    .shadow(color: Color.white.opacity(0.4), radius: 5, x: -5, y: -5)
-                    .shadow(color: Color.black.opacity(0.2), radius: 5, x: 5, y: 5)
-                    .padding(.horizontal, 10)
-                    .opacity((alreadyPlayed || cardsModelView.possibleToWinMoreForFree) && !clearView ? 0.2 : (alreadyPlayed ? 0.45 : 0.8))
-                    .saturation((!cardsModelView.possibleToWinMoreForFree && !alreadyPlayed) || clearView  ? 1 : 0.2)
-                }
-            })
-                
-
-            
-        }
-        .disabled(cardsModelView.possibleToWinMoreForFree)
-        .alert(isPresented: $showPlayAlertTwo) {
-            Alert(title: Text("Tu as déjà eu assez de surprises pour aujourd'hui"), message: Text("Demain tu pourras participer à un quizz !"), dismissButton: .default(Text("OK")))
-        }
-    }
-}
-
-struct Gift: View {
-    @State var showPlayAlertOne = false
-    @State var alreadyWonCards = false
-    @State var activateLinkOne = false
-    @EnvironmentObject var cardsModelView: CardsLists
-
-    var body: some View {
-        VStack{
-            NavigationLink(destination: NewCardsWonView(bgColor: Color(UIColor.systemTeal)), isActive: self.$activateLinkOne, label: {
-                Button(action: {
-                    if self.alreadyWonCards == true || !self.cardsModelView.possibleToWinMoreForFree {
-                        self.showPlayAlertOne = true
-                        self.activateLinkOne = false
-
-                    } else {
-                        self.showPlayAlertOne = false
-                        self.alreadyWonCards.toggle()
-                        self.activateLinkOne = true
-
-                    }
-                }) {
-                    VStack{
-                        Image("gift1")
-                            
-                            .renderingMode(.original)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width:95, height: 95)
-                        //.padding(.top, 20)
-                        //.font(.title)
-                             
-                        Text("Cadeaux")
-                            .font(.footnote)
-                            .padding(.top, -22)
-                        
-                    }
-                    .frame(width: 60, height: 60)
-                    .padding()
-                    .background(Color(UIColor.systemTeal).opacity(0.6))
-                    .cornerRadius(15)
-                    .foregroundColor(Color(UIColor.systemGray5))
-                    .shadow(color: Color.white.opacity(0.4), radius: 5, x: -5, y: -5)
-                    .shadow(color: Color.black.opacity(0.2), radius: 5, x: 5, y: 5)
-                    .padding(.horizontal, 10)
-                    
-                }
-            })
-                .onAppear(){
-                    print("lool : \(self.cardsModelView.possibleToWinMoreForFree)")
-                    if !self.cardsModelView.possibleToWinMoreForFree {
-                        self.activateLinkOne = false
-
-                    }
-            }
-            //.disabled(!cardsModelView.possibleToWinMoreForFree)
-        }.alert(isPresented: $showPlayAlertOne) {
-            Alert(title: Text("Tu as déjà gagné des cartes aujourd'hui"), message: Text("On t'offrira de nouvelles cartes demain"), dismissButton: .default(Text("OK")))
-        }
-    }
-}
 
 
 // Page HomeView
 struct HomeView: View {
     
     @EnvironmentObject var cardsModelView: CardsLists
+  
     let collectionTypes = CollectionType.allCases
     
     func isCollEmpty(collection: CollectionType) -> Bool {
@@ -196,14 +78,18 @@ struct HomeView: View {
     @State private var activateLinkTwo: Bool = false
     
     var body: some View {
-            ZStack {
-                Color("generalBackgroundColor").opacity(0.1)
+            return ZStack {
+                Color("generalBackgroundColor")
                 .edgesIgnoringSafeArea(.all)
                 ScrollView(.vertical, showsIndicators: false){
                     VStack{
                         Spacer().frame(height: 20)
+                            .onAppear() {
+                                GlobalTabBar.reAppear()
+                        }
 
                         HStack{
+                            
                             Gift()
                             .opacity(cardsModelView.possibleToWinMoreForFree ? 0.8 : 0.2)
                             .saturation(cardsModelView.possibleToWinMoreForFree ? 1 : 0.2)
@@ -232,6 +118,8 @@ struct HomeView: View {
         
     }
 }
+
+
 
 struct HomeView_Previews: PreviewProvider {
     static var previews: some View {

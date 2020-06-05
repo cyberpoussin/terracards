@@ -10,60 +10,70 @@ import SwiftUI
 
 struct CardRecto: View {
     @ObservedObject var card: Card
+    @Environment(\.verticalSizeClass) var sizeClass
+
+
     
-    struct imageDefault: View {
-        var body: some View {
-            Image("photoChene")
-                .saturation(0.0)
-                .opacity(0.3)
-        }
-    }
     var body: some View {
         VStack {
             
-            if card.imageRecto != nil {
-                HStack {
-                    Spacer()
-                    Image(systemName: "xmark")
-                        .frame(width: 20)
-                        .padding()
-                        .overlay(
-                            Circle()
-                                .stroke(lineWidth: 1)
-                                .padding(6)
-                    )
-                        .padding(.trailing, 20)
-                        .padding(.top, 30)
-                        .opacity(0.3)
-                    
-                    
-                }
-                VStack {
-                    Spacer()
-                    card.imageRecto!
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 270)
-                .padding(.top, 30)
-                    Spacer()
-                }
-                .frame(height: 400)
+            ZStack {
                 
                 
-            } else {
-                imageDefault()
-                    //.resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 250, maxHeight: UIScreen.main.bounds.height * 100/100, alignment: .center)
-                    .cornerRadius(12)
-                    .contentShape(Rectangle())
-                    .clipped()
-                    .onAppear() {
-                        self.card.loadingImages()
-                    }
-                .allowsHitTesting(false)
+                
+                    ZStack {
+                            Color("cardBackground")
 
+                            if card.imageRecto != nil && card.imageVerso != nil {
+                                card.imageRecto!
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .padding(.top, 30)
+                                .blendMode(.multiply)
+                            } else {
+                                Image(card.collection.image)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .padding(.top, 30)
+                                .blendMode(.multiply)
+                                .saturation(0.0)
+                                .opacity(0.3)
+                                .onAppear() {
+                                    self.card.loadingImages()
+                                }
+                            }
+                            
+                        }
+                    .frame(height: DeviceManager.cardHeight * 1/2)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 0)
+
+                        
+                        
+                
+                
+                VStack {
+                    HStack {
+                        Spacer()
+                        Image(systemName: "xmark")
+                            .frame(width: 20)
+                            .padding()
+                            .overlay(
+                                Circle()
+                                    .stroke(lineWidth: 1)
+                                    .padding(6)
+                        )
+                            .padding(.trailing, 20)
+                            .padding(.top, 30)
+                            .opacity(0.3)
+                        
+                        
+                    }
+                    Spacer()
+                }
+                
             }
+            
             
                 
             Spacer()
@@ -71,13 +81,6 @@ struct CardRecto: View {
             HStack {
                 Text(card.name)
                     .font(.title)
-                Circle()
-                    .stroke(lineWidth: 1)
-                    .frame(width: 25, height: 25)
-                    .overlay(
-                        Text("?")
-                )
-                    .opacity(0.3)
             }
             Spacer()
             HStack(spacing: 20) {
@@ -86,7 +89,7 @@ struct CardRecto: View {
                         Image(habitat.rawValue)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .frame(width:50)
+                            .frame(width:25, height: 25)
                         Text(habitat.name)
                             .font(.footnote)
                     }
@@ -94,7 +97,8 @@ struct CardRecto: View {
                 
                 
             }
-            .opacity(0.8)
+            .opacity(0.6)
+            
             Spacer().frame(height: 30)
         }
     }

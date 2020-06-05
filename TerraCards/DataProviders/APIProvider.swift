@@ -15,12 +15,12 @@ import UIKit
 enum APIResponse {
     case image(image: UIImage)
     case data(data: Data)
-    case cardList(cardList: CardList)
+    case cardList(cardList: CardList, data: Data)
 }
 
 enum APIError: Error {
     case noResponse
-    
+    case dataEmpty
     case networkError(error: Error)
     case serverError(response: URLResponse?)
         
@@ -62,7 +62,7 @@ extension APIProvider {
                     return
             }
             DispatchQueue.main.async() {
-                print("image chargée")
+                print("image téléchargée")
                 completion(.success(.image(image: image)))
             }
         } ).resume()
@@ -74,7 +74,58 @@ extension APIProvider {
         let url = URL(string: "https://api.airtable.com/v0/appPrjpqmbTjrOAI9/Card")!
         
         var components = URLComponents(url: url, resolvingAgainstBaseURL: true)
-        let params = ["api_key":"keyXSumLVSJRFmMRd"]
+        let params = ["api_key":"keyXSumLVSJRFmMRd", "filterByFormula":"NOT({name} = '')"]
+        components?.queryItems = params.map({URLQueryItem(name: $0, value: $1)})
+        var request = URLRequest(url: (components?.url!)!)
+        request.httpMethod = "GET"
+        request.setValue("Application/json", forHTTPHeaderField: "Content-Type")
+        
+        let task = APIProvider.shared.session.dataTask(with: request) { data, response, error in
+            guard
+                self.handleHttpError(data: data, response: response, error: error, errorCompletion: completion) == nil,
+                let data = self.handleData(data: data, response: response, error: error, errorCompletion: completion) else {
+                    print("erreur lors de la récupération des données de Airtable")
+                    return
+            }
+            completion(.success(.data(data: data)))
+        }
+        task.resume()
+    }
+    
+    public func requestAllRecordsValidated(completion: @escaping Completion) {
+        let url = URL(string: "https://api.airtable.com/v0/appPrjpqmbTjrOAI9/Card")!
+        
+        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)
+        let params = ["api_key":"keyXSumLVSJRFmMRd", "filterByFormula":"AND(NOT({name} = ''),NOT({readyToPublish} = ''))"]
+        components?.queryItems = params.map({URLQueryItem(name: $0, value: $1)})
+        var request = URLRequest(url: (components?.url!)!)
+        request.httpMethod = "GET"
+        request.setValue("Application/json", forHTTPHeaderField: "Content-Type")
+        
+        let task = APIProvider.shared.session.dataTask(with: request) { data, response, error in
+            guard
+                self.handleHttpError(data: data, response: response, error: error, errorCompletion: completion) == nil,
+                let data = self.handleData(data: data, response: response, error: error, errorCompletion: completion) else {
+                    print("erreur lors de la récupération des données de Airtable")
+                    return
+            }
+            completion(.success(.data(data: data)))
+        }
+        task.resume()
+    }
+    
+    public func requestLastUpdate(completion: @escaping Completion) {
+        let url = URL(string: "https://api.airtable.com/v0/appPrjpqmbTjrOAI9/Card")!
+        
+        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)
+        let params: [(String, String)] = [
+            ("api_key","keyXSumLVSJRFmMRd"),
+            ("fields[]","modifiedTime"),
+            ("fields[]","name"),
+            ("filterByFormula","AND(NOT({name} = ''),NOT({readyToPublish} = ''))"),
+            ("sort[0][field]","modifiedTime"),
+            ("sort[0][direction]","desc"),
+        ]
         components?.queryItems = params.map({URLQueryItem(name: $0, value: $1)})
         var request = URLRequest(url: (components?.url!)!)
         request.httpMethod = "GET"
@@ -94,6 +145,8 @@ extension APIProvider {
     
     
     
+    
+    
 }
 
 
@@ -101,10 +154,12 @@ extension APIProvider {
     func handleHttpError(data: Data?, response: URLResponse?, error: Error?, errorCompletion completion: @escaping Completion) -> Error? {
         
         guard let httpURLResponse = response as? HTTPURLResponse, httpURLResponse.statusCode == 200 else {
+            print("mauvaise réponse HTTP : \(response)")
             completion(.failure(.noResponse))
             return APIError.serverError(response: response)
         }
         guard error == nil else {
+            print("erreur dans la requête http : \(error)")
             completion(.failure(.noResponse))
             return APIError.networkError(error: error!)
         }
@@ -115,7 +170,8 @@ extension APIProvider {
     func handleData(data: Data?, response: URLResponse?, error: Error?, errorCompletion completion: @escaping Completion) -> Data? {
         
         guard let data = data else {
-            completion(.failure(.noResponse))
+            completion(.failure(.dataEmpty))
+            print("données vides")
             return nil
         }
         

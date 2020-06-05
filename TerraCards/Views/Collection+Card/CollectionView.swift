@@ -10,7 +10,8 @@ import SwiftUI
 
 struct CollectionView: View {
     @EnvironmentObject var cardsModelView: CardsLists
-    
+    @Environment(\.verticalSizeClass) var sizeClass
+
     var collection: CollectionType?
     var cardList: [Card]?
     
@@ -74,31 +75,44 @@ struct CollectionView: View {
     
     var body: some View {
         ZStack {
-            VStack {
-                //Spacer().frame(height: 130)
-                Spacer()
+            if collec.isEmpty {
+                if bgColor != nil {
+                    bgColor!
+                } else {
+                    Color("fish")
+                }
+            } else {
+                if bgColor != nil {
+                    bgColor!
+                } else {
+                    Color(collec[0].collection.rawValue)
+                }
             }
                 
-            .frame(width: UIScreen.main.bounds.width * 100/100, height: UIScreen.main.bounds.height * 120/100)
-                
-            .background(collec.isEmpty ? bgColor ?? Color("fish") : (bgColor ?? Color(collec[0].collection.rawValue)))
+            
             
             ScrollView {
-                Spacer().frame(height: 70)
+                Spacer().frame(height: 80)
                 VStack(spacing: 0) {
                     ForEach(collec3by3, id: \.self, content: {row in
                         HStack(spacing: 0) {
                             ForEach(0..<3) { i in
                                 //MiniCardView( isACardClicked: self.$isACardClicked, opacity: self.opacityCards, disappear: self.disappear, card: row[i])
                                 if i < row.count {
-                                    MiniCardView( isACardClicked: self.$isACardClicked, opacity: self.$opacityCards,  card: row[i] , bgColor: self.bgColor ?? Color(self.collec[0].collection.rawValue))
-                                        .frame(height: 250)
+                                    MiniCardView( isACardClicked: self.$isACardClicked, opacity: self.$opacityCards,  card: row[i] , bgColor: self.bgColor ?? Color(self.collec[0].collection.rawValue), position: i)
+                                        .frame(height: DeviceManager.cardHeight*DeviceManager.miniCardScale)
+                                        .padding(0)
                                 } else {
-                                    MiniCardView( isACardClicked: self.$isACardClicked, opacity: self.$opacityCards, card: Card()).hidden()
+                                    MiniCardView( isACardClicked: self.$isACardClicked, opacity: self.$opacityCards, card: Card())
+                                        .frame(height: DeviceManager.cardHeight*DeviceManager.miniCardScale)
+                                        .hidden()
                                 }
                             }
                         }
-                        .padding(.horizontal, 15)
+                        
+                        .padding(.horizontal, DeviceManager.orientation == .portrait ? 20 : 30)
+                        .padding(.vertical, DeviceManager.orientation == .portrait ? 10 : 20)
+
                         
                         
                         
@@ -107,18 +121,22 @@ struct CollectionView: View {
                         
                         
                     })
-                    ForEach(0..<(3 - collec3by3.count)) {_ in 
-                        HStack {
-                            Spacer().frame(height: 250)
+                    if  collec3by3.count < 3 {
+                        ForEach(0..<(3 - collec3by3.count)) {_ in
+                            HStack {
+                                Spacer().frame(height: DeviceManager.cardHeight*0.25)
+                            }
                         }
                     }
                 }
-                .frame(width: UIScreen.main.bounds.width * 100/100)
-                
+                //.frame(width: UIScreen.main.bounds.width * 100/100)
+                Spacer().frame(height: 120)
                 
             }            
         }
         .edgesIgnoringSafeArea(.all)
+        //.frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+        //.zIndex(100)
         
     }
 }
@@ -126,6 +144,37 @@ struct CollectionView: View {
 struct CollectionView_Previews: PreviewProvider {
     static var previews: some View {
         //CollectionView(collection: .plant).environmentObject(CardsLists())
-        CollectionView(cardList: Array(repeating: Card(), count: 12))
+        var env = CardsLists()
+        return CollectionView(cardList: Array(repeating: Card(), count: 12)).environmentObject(CardsLists())
+            .onAppear(){
+                env.fillLists(){response in
+                    switch response {
+                    case .success:
+                        // ici ce sont les cartes qui étaient déjà dans les UserSettings
+                        for card in env.wonCards {
+                            print("carte de départ en preview : \(card.name ?? "")")
+                        }
+                        
+                        
+                        //                carte de départ en preview : Optional("Chêne")
+                        //                carte de départ en preview : Optional("Dauphin")
+                        //                carte de départ en preview : Optional("Ortie")
+                        //                carte de départ en preview : Optional("Pavot cornu")
+                        //                carte de départ en preview : Optional("Jacinthe des bois")
+                        
+                        // on en gagne quelques autres pour le fun, attention si le nom est pas le même exactement que dans la base : crash
+                        var cardsToAdd: [Card] = []
+                        cardsToAdd.append(env.allCards.first(where: {$0.name == "Mésange bleue"})!)
+                        cardsToAdd.append(env.allCards.first(where: {$0.name == "Lérot"})!)
+                        env.winCards(cards: cardsToAdd)
+                        
+
+                    case .failure :
+                        print("mince")
+                    }
+                }
+                
+        }
+
     }
 }
