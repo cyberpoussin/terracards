@@ -109,7 +109,9 @@ struct LittleCardView: View {
                                     //.shadow(color: Color.white.opacity(0.7), radius: 10, x: -5, y: -5)
                                     //.shadow(color: Color.black.opacity(0.2), radius: 10, x: 5, y: 5)
                                     .padding(.horizontal, 10)
-                                    .overlay(Image("\(imageCollection)").renderingMode(.original).resizable().scaledToFit().frame(width: 90, height: 90))
+                                    .overlay(Image("\(imageCollection)").renderingMode(.original).resizable().scaledToFit().frame(width: 90, height: 90)
+                                        //.blendMode(.multiply)
+                                    )
                             }
                             Text (titreCollection)
                                 .font(.footnote)

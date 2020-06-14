@@ -12,6 +12,7 @@ struct Help: View {
     
     @EnvironmentObject var cardsModelView: CardsLists
     @ObservedObject var helpViewManager: HelpViewManager
+    @Environment(\.verticalSizeClass) var size
 
     
     var nbCard: Int? {
@@ -50,9 +51,7 @@ struct Help: View {
                         }
                     }
                 }
-                
             })
-        
         
         return
             ZStack {
@@ -71,25 +70,18 @@ struct Help: View {
                                         ThreeWords(sentence: "Collectionne les toutes")
                                             .font(.title)
                     }, secondView: {
-                        HStack {
-                            //if self.showed[0] {
-                            Text("Tes cartes gagnées sont rangées dans des collections (plantes, oiseaux, poissons, etc.) Pour commencer, on t'en a offert déjà 5. A toi de découvrir où elles sont rangées et les informations qu'elles contiennent.")
-                                
+                            Text("Tes cartes gagnées sont rangées dans des collections (plantes, oiseaux, poissons, etc.) Pour commencer, tu en as déjà 5. Découvre vite où elles sont rangées et les informations qu'elles contiennent.")
                                 .padding(40)
+                                
                                 .transition(.move(edge: .bottom))
-                            
-                        }
                     }, thirdView: {
                         HStack {
                             if self.onBoarding {
                                 ThreeWords(sentence : "Glisse pour commencer !")
                             } else {
                                 Text("Fin...")
-                                
                             }
                         }
-                        //.foregroundColor(Color.white)
-                        
                     })
                 }
                 .onAppear() {
@@ -97,150 +89,176 @@ struct Help: View {
                         //self.showed2.toggle()
                     }
                 }
-                .frame(width:UIScreen.main.bounds.width)
+                .frame(width: UIScreen.main.bounds.width)
                 .offset(x: self.helpViewManager.offset[3].width, y: 0)
                 .gesture(drag)
                 .disabled(self.helpViewManager.sheet != 3 || !onBoarding)
                 
                 
-                ZStack {
-                    Color(UIColor.systemGreen)
-                        .edgesIgnoringSafeArea(.all)
-                    
-                    if helpViewManager.showed[2] {
-                        ThreeVerticalView(delays: [1,2,3],
-                                          firstView: {
-                                            Text("Gagne des cartes chaque jour !")
-                                                .font(.title)
-                        }, secondView: {
-                            VStack {
-                                HStack {
-                                    Quizz(clearView: true)
-                                        
-                                        .disabled(true)
-                                    Gift()
-                                        
-                                        .disabled(true)
-                                }
-                                
-                                Text("Des cartes comme cette salamandre, tu vas pouvoir en gagner 3 gratuitement chaque jour. Tous les matins un nouveau cadeau apparaît dans TerraCards, à toi de découvrir ce qu'il y a dedans. Si tu as encore soif de connaissances, participe à des quizz pour gagner encore plus de cartes.")
-                                    
-                                    .padding(40)
-                                    .transition(.move(edge: .bottom))
-                                
-                            }
-                        }, thirdView: {
-                            ThreeWords(sentence : "Glisse pour continuer")
-                            
-                            //.foregroundColor(Color.white)
-                            
-                        })
-                    }
-                }
-                .onAppear() {
-                    withAnimation(.linear(duration: 3)) {
-                        //self.showed2.toggle()
-                    }
-                }
+                GreenSheet(helpViewManager: helpViewManager)
                 .frame(width:UIScreen.main.bounds.width)
                 .offset(x: self.helpViewManager.offset[2].width, y: 0)
                 .gesture(drag)
                 .disabled(self.helpViewManager.sheet != 2)
                 
-                
-                
-                
-                ZStack {
-                    Color(UIColor.systemBlue)
-                        .edgesIgnoringSafeArea(.all)
-                    
-                    VStack {
-                        Spacer()
-                        if nbCard != nil {
-                            CardFlip(flip: $helpViewManager.endFlip, versoView: {
-                                AnyView(CardVerso(card: cardsModelView.allCards[nbCard!]))
-                            }, rectoView: {
-                                AnyView(CardRecto(card: cardsModelView.allCards[nbCard!]))
-                            })
-                                .scaleEffect(0.5)
-                                .frame(height: DeviceManager.cardHeight*0.5)
-                                .disabled(helpViewManager.endFlip)
-                        }
-                        
-                        Text("Tu vas collectionner des cartes qui te permettront d'avoir des informations sur des animaux et des plantes des environs")
-                            .padding(.horizontal, 40)
-                        Text("Retourne cette carte pour voir !")
-                            .padding()
-                        //if showed[1] {
-                        
-                        if helpViewManager.endFlip {
-                            HStack {
-                                AnimatedChevron()
-                                Text("Glisse pour continuer")
-                                    .foregroundColor(Color.white)
-                                
-                                
-                            }
-                            .opacity(helpViewManager.opacity)
-                            .onAppear() {
-                                withAnimation(.linear(duration: 1)) {
-                                    self.helpViewManager.opacity = 1
-                                }
-                            }
-                            
-                        }
-                        
-                        //}
-                        
-                        Spacer()
-                    }
-                }
+                BlueSheet(helpViewManager: helpViewManager, cardsModelView: cardsModelView, nbCard: nbCard)
                 .frame(width:UIScreen.main.bounds.width)
                 .offset(x: self.helpViewManager.offset[1].width, y: 0)
                 .gesture(drag)
                 .disabled(self.helpViewManager.sheet != 1)
                 
                 
-                ZStack {
-                    Color(UIColor.systemRed)
-                        .edgesIgnoringSafeArea(.all)
-                        .onAppear() {
-                            if !self.onBoarding {
-                                GlobalTabBar.disappear()
-                            }
-                    }
-                    
-                    ThreeVerticalView(delays: [2.5,5,0],
-                                      firstView: {
-                                        ThreeWords(sentence: "Bienvenue dans TerraCards")
-                                            .font(.title)
-                    }, secondView: {
-                        HStack {
-                            //if self.showed[0] {
-                            Text("Avec TerraCards tu vas apprendre beaucoup de choses sur la faune et la flore qui t'entoure. Que tu habites à la campagne, au bord de la mer, ou même en ville")
-                                
-                                .padding(40)
-                                .transition(.move(edge: .bottom))
-                            
-                        }
-                    }, thirdView: {
-                        ThreeWords(sentence : "Glisse pour continuer")
-                        
-                        //.foregroundColor(Color.white)
-                        
-                    })
-                    
-                    
-                }
+                RedSheet(onBoarding: onBoarding)
                 .frame(width:UIScreen.main.bounds.width)
+                    
                 .offset(x: self.helpViewManager.offset[0].width, y: 0)
                 .gesture(drag)
-                .disabled(self.helpViewManager.sheet != 0)
-                
-                
-            }.edgesIgnoringSafeArea(.all)
+            }
+    }
+}
+
+struct GreenSheet: View {
+    @ObservedObject var helpViewManager: HelpViewManager
+    @Environment(\.verticalSizeClass) var size
+    var body: some View {
+        ZStack {
+            Color(UIColor.systemGreen)
+                .edgesIgnoringSafeArea(.all)
+            
+            if helpViewManager.showed[2] {
+                ThreeVerticalView(delays: [1,2,3],
+                                  firstView: {
+                                    Text("Gagne des cartes chaque jour !")
+                                        .font(.title)
+                }, secondView: {
+                    VStack {
+                        HStack {
+                            Quizz(clearView: true)
+                                
+                                .disabled(true)
+                            Gift()
+                                
+                                .disabled(true)
+                        }
+                        
+                        Text("Tous les matins un nouveau cadeau apparaît dans TerraCards. Il contient trois nouvelles cartes. Si tu as encore soif de connaissances, participe à des quiz pour gagner encore plus de cartes.")
+                            
+                            .padding(.horizontal, 40)
+                            .transition(.move(edge: .bottom))
+                        
+                    }
+                }, thirdView: {
+                    ThreeWords(sentence : "Glisse pour continuer")
+                    
+                    //.foregroundColor(Color.white)
+                    
+                })
+            }
+        }
+        .onAppear() {
+            withAnimation(.linear(duration: 3)) {
+                //self.showed2.toggle()
+            }
+        }
         
         
+        
+        
+        
+    }
+}
+
+struct BlueSheet: View {
+    @ObservedObject var helpViewManager: HelpViewManager
+    @ObservedObject var cardsModelView: CardsLists
+    @Environment(\.verticalSizeClass) var size
+
+    var nbCard: Int?
+    var body: some View {
+        ZStack {
+            Color(UIColor.systemBlue)
+                .edgesIgnoringSafeArea(.all)
+            
+            VStack {
+                if nbCard != nil {
+                    CardFlip(flip: $helpViewManager.endFlip, versoView: {
+                        AnyView(CardVerso(card: cardsModelView.allCards[nbCard!]))
+                    }, rectoView: {
+                        AnyView(CardRecto(card: cardsModelView.allCards[nbCard!]))
+                    })
+                        .scaleEffect(0.4)
+                        .frame(height: DeviceManager.cardHeight*0.4)
+                        .disabled(helpViewManager.endFlip)
+                }
+                
+                Text("Dans TerraCards tu collectionnes des cartes qui comportent des informations sur les animaux et les plantes des environs. Retourne celle-ci pour voir !")
+                    .padding(.top, 15)
+                    .padding(.horizontal, 30)
+                    
+                
+                if helpViewManager.endFlip {
+                    HStack {
+                        AnimatedChevron()
+                        Text("Glisse pour continuer")
+                            .foregroundColor(Color.white)
+                        
+                        
+                    }
+                    .opacity(helpViewManager.opacity)
+                    .onAppear() {
+                        withAnimation(.linear(duration: 1)) {
+                            self.helpViewManager.opacity = 1
+                        }
+                    }
+                    
+                } else {
+                    HStack {
+                        AnimatedChevron()
+                        Text("Glisse pour continuer")
+                            .foregroundColor(Color.white)
+                    }.hidden()
+                }
+                
+
+            }.padding(.horizontal, 140)
+        }
+    }
+}
+
+struct RedSheet: View {
+    var onBoarding: Bool
+    var body: some View {
+        ZStack {
+            Color(UIColor.systemRed)
+                .edgesIgnoringSafeArea(.all)
+                .onAppear() {
+                    if !self.onBoarding {
+                        GlobalTabBar.disappear()
+                    }
+            }
+            
+            ThreeVerticalView(delays: [2.5,5,0],
+                              firstView: {
+                                ThreeWords(sentence: "Bienvenue dans TerraCards")
+                                    .font(.title)
+            }, secondView: {
+                VStack {
+                    //if self.showed[0] {
+                    Text("Avec TerraCards tu vas apprendre à mieux connaître la faune et la flore qui t'entoure. Que tu habites à la campagne, au bord de la mer, ou même en ville")
+                        
+                        .padding(40)
+                        .transition(.move(edge: .bottom))
+                    
+                }
+            }, thirdView: {
+                ThreeWords(sentence : "Glisse pour continuer")
+                
+                //.foregroundColor(Color.white)
+                
+            })
+            
+            
+        }
     }
 }
 

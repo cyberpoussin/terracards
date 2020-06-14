@@ -56,7 +56,7 @@ struct Quizz: View {
                     .shadow(color: Color.white.opacity(0.4), radius: 5, x: -5, y: -5)
                     .shadow(color: Color.black.opacity(0.2), radius: 5, x: 5, y: 5)
                     .padding(.horizontal, 10)
-                    .opacity((!cardsModelView.possibleToWinMoreForFree && !alreadyPlayed) || clearView  ? 1 : 0.2)
+                    .opacity((!cardsModelView.possibleToWinMoreForFree && !alreadyPlayed) || clearView  ? 1 : 0.04)
                     .saturation((!cardsModelView.possibleToWinMoreForFree && !alreadyPlayed) || clearView  ? 1 : 0.2)
                 }
             })
@@ -66,7 +66,7 @@ struct Quizz: View {
         }
         //.disabled(cardsModelView.possibleToWinMoreForFree)
         .alert(isPresented: $showPlayAlertTwo) {
-            Alert(title: Text("Les quizz ne sont pas encore implémentés"), message: Text("Soutiens notre appli en votant sur l'App Store et nous pourrons les mettre en place"), dismissButton: .default(Text("OK")))
+            Alert(title: Text("Les quiz ne sont pas encore implémentés"), message: Text("Soutiens notre appli en votant sur l'App Store et nous pourrons les mettre en place"), dismissButton: .default(Text("OK")))
         }
     }
 }

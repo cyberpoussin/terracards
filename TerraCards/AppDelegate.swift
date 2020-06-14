@@ -47,10 +47,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         
         
-        let REINIT = true
+        let REINIT = false
         UserSettings.illimitedQuizz = true
         if REINIT {
-            UserSettings.nbLaunches = 2
+            UserSettings.nbLaunches = 1
             UserSettings.lastFreeWins = "2001-01-01"
             UserDefaults.standard.removeObject(forKey: UserDefaults.Keys.allCards.rawValue)
             FileProvider.clearImagesFromCacheFolder(){response in

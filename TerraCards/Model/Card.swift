@@ -284,7 +284,7 @@ enum CollectionType: String, CaseIterable, Identifiable, Codable{
                 case .plant : return "fleur"
                 case .amphibian : return "grenouille2"
                 case .smallMammal : return "herisson"
-                case .spider : return "araignee"
+                case .spider : return "araignee5"
                 case .dinosaur : return "dino"
             }
         }

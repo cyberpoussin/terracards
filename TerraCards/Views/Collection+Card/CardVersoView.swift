@@ -53,7 +53,7 @@ struct CardVerso: View {
                     card.imageVerso!
                         .resizable()
                         .aspectRatio(contentMode: .fill)
-                        .frame(width: DeviceManager.cardWidth, height: DeviceManager.orientation == .landscape ? DeviceManager.cardHeight/2 : DeviceManager.cardHeight/2.5, alignment: .center)
+                        .frame(width: DeviceManager.cardWidth, height: DeviceManager.orientation == .landscape ? DeviceManager.cardHeight/2 : DeviceManager.cardHeight/2, alignment: .center)
                         .clipped()
                         //.frame(width: DeviceManager.cardWidth, alignment: .top)
                         .cornerRadius(12)
@@ -63,24 +63,22 @@ struct CardVerso: View {
                     .frame(width: DeviceManager.cardWidth, height: DeviceManager.cardHeight/2, alignment: .center)
                 }
                 //Spacer()
-            }.frame(width: DeviceManager.cardWidth)
-
+            }
+            .frame(width: DeviceManager.cardWidth)
             .allowsHitTesting(false)
             
-            //Spacer().frame(height: DeviceManager.cardHeight/10)
+            Spacer().frame(height: DeviceManager.cardHeight/10)
             
             HStack {
                 Text(card.name)
                     .font(.title)
             }
-            //Spacer()
             HStack {
                 Text(card.anecdote ?? "")
                     .padding(.horizontal, 20)
             }
             .frame(height: DeviceManager.cardHeight/4)
             
-            Spacer().frame(height: 50)
             Spacer()
         }
     }

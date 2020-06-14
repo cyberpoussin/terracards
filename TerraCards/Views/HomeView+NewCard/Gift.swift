@@ -10,20 +10,18 @@ import SwiftUI
 
 struct Gift: View {
     @State var showPlayAlertOne = false
-    @State var alreadyWonCards = false
     @State var activateLinkOne = false
     @EnvironmentObject var cardsModelView: CardsLists
     var body: some View {
         VStack{
             NavigationLink(destination: NewCardsWonView(bgColor: Color(UIColor.systemTeal)), isActive: self.$activateLinkOne, label: {
                 Button(action: {
-                    if self.alreadyWonCards == true || !self.cardsModelView.possibleToWinMoreForFree {
+                    if !self.cardsModelView.possibleToWinMoreForFree {
                         self.showPlayAlertOne = true
                         self.activateLinkOne = false
 
                     } else {
                         self.showPlayAlertOne = false
-                        self.alreadyWonCards.toggle()
                         self.activateLinkOne = true
 
                     }
