@@ -17,7 +17,7 @@ struct Help: View {
     
     var nbCard: Int? {
         return cardsModelView.allCards.firstIndex {
-            $0.name == "Salamandre tâchetée"
+            $0.name == "Mésange bleue"
         }
     }
     
@@ -56,15 +56,25 @@ struct Help: View {
         return
             ZStack {
                 ZStack {
-                    Color(UIColor.systemYellow)
+                    Color("bird")
                         .edgesIgnoringSafeArea(.all)
                     
                     if self.helpViewManager.sheet == 3 && !onBoarding{
                         Text("")
                             .onAppear() {
                                 GlobalTabBar.reAppear()
+                                
                         }
                     }
+                    
+                    if self.helpViewManager.sheet == 4 {
+                        Text("")
+                            .onAppear() {
+                                        UserSettings.nbLaunches += 1
+                                
+                        }
+                    }
+                    
                     ThreeVerticalView(delays: [1,1,2], arrow: false,
                                       firstView: {
                                         ThreeWords(sentence: "Collectionne les toutes")
@@ -122,7 +132,7 @@ struct GreenSheet: View {
     @Environment(\.verticalSizeClass) var size
     var body: some View {
         ZStack {
-            Color(UIColor.systemGreen)
+            Color("tree")
                 .edgesIgnoringSafeArea(.all)
             
             if helpViewManager.showed[2] {
@@ -176,7 +186,7 @@ struct BlueSheet: View {
     var nbCard: Int?
     var body: some View {
         ZStack {
-            Color(UIColor.systemBlue)
+            Color(UIColor.systemTeal)
                 .edgesIgnoringSafeArea(.all)
             
             VStack {
@@ -192,7 +202,7 @@ struct BlueSheet: View {
                 }
                 
                 Text("Dans TerraCards tu collectionnes des cartes qui comportent des informations sur les animaux et les plantes des environs. Retourne celle-ci pour voir !")
-                    .padding(.top, 15)
+                    .padding(.vertical, 30)
                     .padding(.horizontal, 30)
                     
                 
@@ -229,7 +239,7 @@ struct RedSheet: View {
     var onBoarding: Bool
     var body: some View {
         ZStack {
-            Color(UIColor.systemRed)
+            Color(UIColor.systemPink)
                 .edgesIgnoringSafeArea(.all)
                 .onAppear() {
                     if !self.onBoarding {

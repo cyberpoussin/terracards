@@ -48,9 +48,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         
         let REINIT = false
-        UserSettings.illimitedQuizz = true
+        UserSettings.illimitedQuizz = false
         if REINIT {
-            UserSettings.nbLaunches = 1
             UserSettings.lastFreeWins = "2001-01-01"
             UserDefaults.standard.removeObject(forKey: UserDefaults.Keys.allCards.rawValue)
             FileProvider.clearImagesFromCacheFolder(){response in
@@ -59,7 +58,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             UserSettings.nbQuizz = 1
             UserSettings.userCards = []
         } else {
-            
+            UserSettings.nbQuizz = 0
             UserSettings.nbLaunches = UserSettings.nbLaunches + 1
             print("nombre de lancement de l'app : \(UserSettings.nbLaunches)")
             

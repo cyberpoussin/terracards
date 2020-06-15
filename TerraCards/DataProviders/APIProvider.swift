@@ -43,7 +43,7 @@ struct APIProvider {
     
     private let session: URLSession = {
         let configuration = URLSessionConfiguration.default
-        configuration.timeoutIntervalForRequest = 30 // seconds
+        configuration.timeoutIntervalForRequest = 5 // seconds
         configuration.waitsForConnectivity = true
         return URLSession(configuration: configuration)
     }()

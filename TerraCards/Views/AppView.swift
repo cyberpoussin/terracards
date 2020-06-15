@@ -84,6 +84,7 @@ struct AppView: View {
             }
                 if UserSettings.nbLaunches == 1 {
                     Help(helpViewManager: helpViewManager).environmentObject(cardsModelView)
+                        
                 }
                 
             }

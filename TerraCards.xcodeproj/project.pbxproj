@@ -80,6 +80,7 @@
 		945D8B92247FDB1C00EC5FB2 /* OnlyValids.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnlyValids.swift; sourceTree = "<group>"; };
 		945D8B9824825C3100EC5FB2 /* DeviceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceManager.swift; sourceTree = "<group>"; };
 		94619031246AAED40086BE1B /* CardFlipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardFlipView.swift; sourceTree = "<group>"; };
+		9462B08124980D4B0087B421 /* privacy.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = privacy.md; sourceTree = "<group>"; };
 		947D4FF024696D3400A212A0 /* CardRectoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardRectoView.swift; sourceTree = "<group>"; };
 		947EAA492476A3FE00F236F3 /* ListTropheesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListTropheesView.swift; sourceTree = "<group>"; };
 		947EAA4A2476A3FE00F236F3 /* HomeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
@@ -249,6 +250,7 @@
 			isa = PBXGroup;
 			children = (
 				C531C49224643DE900E192E8 /* AppDelegate.swift */,
+				9462B08124980D4B0087B421 /* privacy.md */,
 				C531C49424643DE900E192E8 /* SceneDelegate.swift */,
 				5CEB50EB246443AC004092A8 /* Model */,
 				94B8D81E24644DC5002AD58C /* Views */,
@@ -630,6 +632,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"TerraCards/Preview Content\"";
 				DEVELOPMENT_TEAM = 62724PC466;
@@ -639,8 +642,9 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.biodiversity.TerraCards;
+				PRODUCT_BUNDLE_IDENTIFIER = com.AdrnSmn.TerraCards;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -650,6 +654,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"TerraCards/Preview Content\"";
 				DEVELOPMENT_TEAM = 62724PC466;
@@ -659,8 +664,9 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.biodiversity.TerraCards;
+				PRODUCT_BUNDLE_IDENTIFIER = com.AdrnSmn.TerraCards;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
