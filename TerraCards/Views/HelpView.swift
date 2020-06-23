@@ -80,7 +80,7 @@ struct Help: View {
                                         ThreeWords(sentence: "Collectionne les toutes")
                                             .font(.title)
                     }, secondView: {
-                            Text("Tes cartes gagnées sont rangées dans des collections (plantes, oiseaux, poissons, etc.) Pour commencer, tu en as déjà 5. Découvre vite où elles sont rangées et les informations qu'elles contiennent.")
+                            Text("Tes cartes sont rangées dans des collections (plantes, oiseaux, poissons, etc.) Pour commencer, tu en possèdes 5. Découvre vite les informations qu'elles contiennent.")
                                 .padding(40)
                                 
                                 .transition(.move(edge: .bottom))
@@ -112,7 +112,7 @@ struct Help: View {
                 .disabled(self.helpViewManager.sheet != 2)
                 
                 BlueSheet(helpViewManager: helpViewManager, cardsModelView: cardsModelView, nbCard: nbCard)
-                .frame(width:UIScreen.main.bounds.width)
+                    .frame(width:UIScreen.main.bounds.width)
                 .offset(x: self.helpViewManager.offset[1].width, y: 0)
                 .gesture(drag)
                 .disabled(self.helpViewManager.sheet != 1)
@@ -132,13 +132,15 @@ struct GreenSheet: View {
     @Environment(\.verticalSizeClass) var size
     var body: some View {
         ZStack {
-            Color("tree")
+            Color(UIColor.systemGreen)
                 .edgesIgnoringSafeArea(.all)
             
             if helpViewManager.showed[2] {
                 ThreeVerticalView(delays: [1,2,3],
                                   firstView: {
-                                    Text("Gagne des cartes chaque jour !")
+                                    Text("De nouvelles cartes tous les jours !")
+                                        .fixedSize(horizontal: false, vertical: true)
+                                        
                                         .font(.title)
                 }, secondView: {
                     VStack {
@@ -152,7 +154,7 @@ struct GreenSheet: View {
                         }
                         
                         Text("Tous les matins un nouveau cadeau apparaît dans TerraCards. Il contient trois nouvelles cartes. Si tu as encore soif de connaissances, participe à des quiz pour gagner encore plus de cartes.")
-                            
+                            .fixedSize(horizontal: false, vertical: true)
                             .padding(.horizontal, 40)
                             .transition(.move(edge: .bottom))
                         
@@ -198,12 +200,17 @@ struct BlueSheet: View {
                     })
                         .scaleEffect(0.4)
                         .frame(height: DeviceManager.cardHeight*0.4)
+                        .offset(x: 0, y: -60)
                         .disabled(helpViewManager.endFlip)
                 }
                 
-                Text("Dans TerraCards tu collectionnes des cartes qui comportent des informations sur les animaux et les plantes des environs. Retourne celle-ci pour voir !")
-                    .padding(.vertical, 30)
-                    .padding(.horizontal, 30)
+                Text("Chaque carte comporte des informations sur une espèce animale ou végétale. Essaye de retourner cette carte !")
+                    .fixedSize(horizontal: false, vertical: true)
+                    .offset(x: 0, y: -60)
+                    .padding(.top, 20)
+                    .padding(.bottom, -40)
+
+                    .padding(.horizontal, 40)
                     
                 
                 if helpViewManager.endFlip {
@@ -230,7 +237,10 @@ struct BlueSheet: View {
                 }
                 
 
-            }.padding(.horizontal, 140)
+            }
+            .frame(height:UIScreen.main.bounds.height - 200)
+
+            .padding(.horizontal, 140)
         }
     }
 }
@@ -243,7 +253,11 @@ struct RedSheet: View {
                 .edgesIgnoringSafeArea(.all)
                 .onAppear() {
                     if !self.onBoarding {
-                        GlobalTabBar.disappear()
+                        if #available(iOS 14.0, *) {
+                        } else {
+                            GlobalTabBar.disappear()
+                            print("attention ios14")
+                        }
                     }
             }
             
@@ -255,7 +269,7 @@ struct RedSheet: View {
                 VStack {
                     //if self.showed[0] {
                     Text("Avec TerraCards tu vas apprendre à mieux connaître la faune et la flore qui t'entoure. Que tu habites à la campagne, au bord de la mer, ou même en ville")
-                        
+                        .fixedSize(horizontal: false, vertical: true)
                         .padding(40)
                         .transition(.move(edge: .bottom))
                     
@@ -341,7 +355,9 @@ struct ThreeVerticalView<FirstView: View, SecondView: View, ThirdView: View>: Vi
     @State var showed = false
     var body: some View {
         VStack {
-            firstView().opacity(self.opacities[0])
+            firstView()
+                .opacity(self.opacities[0])
+                .padding(.horizontal, 20)
             
             secondView().opacity(self.opacities[1])
             if self.showed {

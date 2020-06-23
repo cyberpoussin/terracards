@@ -55,6 +55,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             FileProvider.clearImagesFromCacheFolder(){response in
                 print("ok")
             }
+            UserSettings.nbLaunches = 1
             UserSettings.nbQuizz = 1
             UserSettings.userCards = []
         } else {
@@ -98,11 +99,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 //FileProvider.writeJsonInCache(data: data)
                 // à retirer en prod
                 var cardsToAdd: [Card] = []
+                cardsToAdd.append(self.cards.allCards.first(where: {$0.name == "Rainette verte"})!)
+                cardsToAdd.append(self.cards.allCards.first(where: {$0.name == "Maquereau"})!)
                 cardsToAdd.append(self.cards.allCards.first(where: {$0.name == "Mésange bleue"})!)
-                cardsToAdd.append(self.cards.allCards.first(where: {$0.name == "Salamandre tâchetée"})!)
-                cardsToAdd.append(self.cards.allCards.first(where: {$0.name == "Moustique tigre"})!)
                 cardsToAdd.append(self.cards.allCards.first(where: {$0.name == "Jacinthe des bois"})!)
-                cardsToAdd.append(self.cards.allCards.first(where: {$0.name == "Goujon"})!)
+                cardsToAdd.append(self.cards.allCards.first(where: {$0.name == "Dauphin"})!)
                 self.cards.winCards(cards: cardsToAdd)
                 for card in self.cards.wonCards {
                     print(card.name ?? "")

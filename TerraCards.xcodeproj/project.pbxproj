@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		94236DC9247F084C006FAE60 /* RowOfCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94236DC8247F084C006FAE60 /* RowOfCards.swift */; };
 		942F6F3A2488FA65004C117F /* TestImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 942F6F392488FA64004C117F /* TestImage.swift */; };
+		9433F8ED249A247F00C5E02A /* liste_cartes_default.json in Resources */ = {isa = PBXBuildFile; fileRef = 9433F8EC249A247F00C5E02A /* liste_cartes_default.json */; };
 		945D8B93247FDB1C00EC5FB2 /* OnlyValids.swift in Sources */ = {isa = PBXBuildFile; fileRef = 945D8B92247FDB1C00EC5FB2 /* OnlyValids.swift */; };
 		945D8B9924825C3100EC5FB2 /* DeviceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 945D8B9824825C3100EC5FB2 /* DeviceManager.swift */; };
 		946A49F72476A4E200F2F9D0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C531C49224643DE900E192E8 /* AppDelegate.swift */; };
@@ -35,7 +36,6 @@
 		946A4A182476A51200F2F9D0 /* CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94B8D82624645421002AD58C /* CollectionView.swift */; };
 		946A4A192476A51200F2F9D0 /* MiniCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94E15AC0246BDC4C00A264F3 /* MiniCardView.swift */; };
 		94873053248707D10093F824 /* GlobalTabBar+UITabBarExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94873052248707D10093F824 /* GlobalTabBar+UITabBarExtension.swift */; };
-		9487305924884D370093F824 /* liste_cartes_default.json in Resources */ = {isa = PBXBuildFile; fileRef = 9487305824884D370093F824 /* liste_cartes_default.json */; };
 		949857312489124800698225 /* Gift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949857302489124800698225 /* Gift.swift */; };
 		949857332489125A00698225 /* Quizz.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949857322489125A00698225 /* Quizz.swift */; };
 		9498573524891EFF00698225 /* HelpViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9498573424891EFF00698225 /* HelpViewManager.swift */; };
@@ -77,6 +77,7 @@
 		9424935024765AAD00BB6172 /* APIProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIProvider.swift; sourceTree = "<group>"; };
 		9424935224765E3800BB6172 /* JSONProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONProvider.swift; sourceTree = "<group>"; };
 		942F6F392488FA64004C117F /* TestImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestImage.swift; sourceTree = "<group>"; };
+		9433F8EC249A247F00C5E02A /* liste_cartes_default.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = liste_cartes_default.json; sourceTree = "<group>"; };
 		945D8B92247FDB1C00EC5FB2 /* OnlyValids.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnlyValids.swift; sourceTree = "<group>"; };
 		945D8B9824825C3100EC5FB2 /* DeviceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceManager.swift; sourceTree = "<group>"; };
 		94619031246AAED40086BE1B /* CardFlipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardFlipView.swift; sourceTree = "<group>"; };
@@ -91,7 +92,6 @@
 		947EAA502476A3FE00F236F3 /* ParametresView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParametresView.swift; sourceTree = "<group>"; };
 		947EAA512476A3FE00F236F3 /* CardTropheeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardTropheeView.swift; sourceTree = "<group>"; };
 		94873052248707D10093F824 /* GlobalTabBar+UITabBarExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GlobalTabBar+UITabBarExtension.swift"; sourceTree = "<group>"; };
-		9487305824884D370093F824 /* liste_cartes_default.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = liste_cartes_default.json; sourceTree = "<group>"; };
 		949857302489124800698225 /* Gift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gift.swift; sourceTree = "<group>"; };
 		949857322489125A00698225 /* Quizz.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Quizz.swift; sourceTree = "<group>"; };
 		9498573424891EFF00698225 /* HelpViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpViewManager.swift; sourceTree = "<group>"; };
@@ -221,7 +221,7 @@
 		C519C47E246ABF8000425756 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				9487305824884D370093F824 /* liste_cartes_default.json */,
+				9433F8EC249A247F00C5E02A /* liste_cartes_default.json */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -408,7 +408,7 @@
 				C531C49F24643DEA00E192E8 /* LaunchScreen.storyboard in Resources */,
 				C531C49C24643DEA00E192E8 /* Preview Assets.xcassets in Resources */,
 				C531C49924643DEA00E192E8 /* Assets.xcassets in Resources */,
-				9487305924884D370093F824 /* liste_cartes_default.json in Resources */,
+				9433F8ED249A247F00C5E02A /* liste_cartes_default.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -564,7 +564,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -618,7 +618,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -642,6 +642,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.01;
 				PRODUCT_BUNDLE_IDENTIFIER = com.AdrnSmn.TerraCards;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -664,6 +665,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.01;
 				PRODUCT_BUNDLE_IDENTIFIER = com.AdrnSmn.TerraCards;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

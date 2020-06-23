@@ -11,7 +11,7 @@ import SwiftUI
 struct CollectionView: View {
     @EnvironmentObject var cardsModelView: CardsLists
     @Environment(\.verticalSizeClass) var sizeClass
-
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     var collection: CollectionType?
     var cardList: [Card]?
     
@@ -134,7 +134,25 @@ struct CollectionView: View {
                 
             }            
         }
+        .navigationBarBackButtonHidden(true)
+
+        .navigationBarItems(leading:  Button(action: {
+            self.presentationMode.wrappedValue.dismiss()
+            }) {
+            HStack {
+                Image(systemName: "chevron.left")
+                Text("Collections")
+                    //.padding(.leading, -15)
+            }
+            
+                
+            }
+        )
+        .navigationBarBackButtonHidden(true)
         .edgesIgnoringSafeArea(.all)
+        
+        //.navigationBarBackButtonHidden(false)
+
         //.frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         //.zIndex(100)
         

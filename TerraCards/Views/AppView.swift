@@ -8,10 +8,27 @@
 
 import SwiftUI
 
+@available(iOS 14.0, *)
+struct DisappearTabBar: View {
+    @ObservedObject var helpViewManager: HelpViewManager
+    var body: some View {
+        Text("")
+            .onAppear {
+                GlobalTabBar.reAppear()
+            }
+            .onChange(of: helpViewManager.changeItemSelection) { value in
+                GlobalTabBar.reAppear()
+                if helpViewManager.changeItemSelection == 3 {
+                    GlobalTabBar.disappear()
+                }
+            }
+    }
+}
 struct AppView: View {
     @Environment(\.verticalSizeClass) var size
     @EnvironmentObject var cardsModelView: CardsLists
     @ObservedObject var helpViewManager: HelpViewManager = HelpViewManager()
+
 
     
     
@@ -25,7 +42,7 @@ struct AppView: View {
                UINavigationBar.appearance().compactAppearance = coloredAppearance
                UINavigationBar.appearance().scrollEdgeAppearance = coloredAppearance
                UINavigationBar.appearance().tintColor = .white
-        UITabBar.appearance().barTintColor = UIColor(named: "generalBackgroundColor")
+               UITabBar.appearance().barTintColor = UIColor(named: "generalBackgroundColor")
         //UITabBar.appearance().backgroundColor = UIColor.black
           //UITabBar.appearance().barTintColor?.withAlphaComponent(0.3)
 //        UITabBar.appearance().backgroundImage =  UIImage()
@@ -43,13 +60,17 @@ struct AppView: View {
         
 
         return ZStack {
+
             
             //NavigationView {
             TabView(selection: $helpViewManager.changeItemSelection) {
                     NavigationView {
                         HomeView()
-                        .navigationBarTitle("Collections", displayMode: .inline)
-                        .navigationBarHidden(true)
+                            .navigationBarTitle(" ", displayMode: .inline)
+                            .navigationBarHidden(false)
+                            
+                            .padding(.top, -30)
+                            
                         
                     }.navigationViewStyle(StackNavigationViewStyle())
                     
@@ -72,11 +93,13 @@ struct AppView: View {
 //                            Text("Environnement")
 //                        })
 
-                        Help(helpViewManager: helpViewManager)
+                    Help(helpViewManager: helpViewManager)
                         .tabItem({
                             Image(systemName: "questionmark.square")
                             Text("Aide")
-                        }).tag(3)
+                        })
+                        
+                        .tag(3)
 
                     
                         
@@ -86,10 +109,14 @@ struct AppView: View {
                     Help(helpViewManager: helpViewManager).environmentObject(cardsModelView)
                         
                 }
-                
+            if #available(iOS 14.0, *) {
+                DisappearTabBar(helpViewManager: helpViewManager)
+            } else {
+                Text("")
+                }
             }
 
-
+        
             
             
             
